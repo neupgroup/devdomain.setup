@@ -23,7 +23,7 @@ Enable requests administrator permission only when `/etc/hosts` must change. Sta
 
 `disable` asks for confirmation. `purge` is safe to run repeatedly and removes only the exact line `127.0.0.1 dev.neupgroup.com`.
 
-The LaunchAgent invokes the installed script using an absolute path every 86400 seconds. It checks the expiry timestamp and removes the mapping, expiry file, and its own plist after 15 days. Since launchd checks every 24 hours, cleanup may occur shortly after the 15-day expiry rather than at the exact second.
+The LaunchAgent invokes the installed script using an absolute path every 28800 seconds (8 hours). It checks the expiry timestamp and removes the mapping, expiry file, and its own plist after 15 days. Since the scheduler checks every 8 hours, cleanup may occur shortly after the 15-day expiry rather than at the exact second.
 
 ## Stored files
 

@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; DOMAIN="$(<"$BASE_DIR/../host.sh")"; HOSTS_ENTRY="127.0.0.1 ${DOMAIN}"; LABEL="com.neup.dev-domain-cleanup"; INTERVAL_SECONDS=86400
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; DOMAIN="$(<"$BASE_DIR/../host.sh")"; HOSTS_ENTRY="127.0.0.1 ${DOMAIN}"; LABEL="com.neup.dev-domain-cleanup"; INTERVAL_SECONDS=28800
 DATA_DIR="${NEUP_DEV_DOMAIN_HOME:-${HOME}/.neup-dev-domain}"
 INSTALLED_SCRIPT="${DATA_DIR}/dev-domain.sh"; EXPIRY_FILE="${DATA_DIR}/expiry"; CLEANUP_LOG="${DATA_DIR}/cleanup.log"; ERROR_LOG="${DATA_DIR}/error.log"
 PLIST="${NEUP_DEV_DOMAIN_LAUNCH_AGENTS:-${HOME}/Library/LaunchAgents}/${LABEL}.plist"; HOSTS_FILE="${NEUP_DEV_DOMAIN_HOSTS_FILE:-/etc/hosts}"; LAUNCHCTL="${NEUP_DEV_DOMAIN_LAUNCHCTL:-/bin/launchctl}"
@@ -33,6 +33,6 @@ enable() {
 }
 disable() { require_macos; read -r -p "Disable ${DOMAIN} and remove its local mapping? [y/N] " answer; [[ "$answer" =~ ^[Yy]$ ]] || { printf 'Cancelled.\n'; return; }; remove_entry; rm -f "$EXPIRY_FILE"; remove_cron_job; flush_dns; printf 'Disabled %s.\n' "$DOMAIN"; }
 purge() { require_macos; [[ -f "$EXPIRY_FILE" ]] || return 0; local expiry now; expiry="$(<"$EXPIRY_FILE")"; [[ "$expiry" =~ ^[0-9]+$ ]] || die 'Invalid expiry timestamp.'; now="$(date +%s)"; (( now >= expiry )) || return 0; remove_entry; rm -f "$EXPIRY_FILE"; remove_cron_job; flush_dns; printf 'Purged expired domain mapping.\n'; }
-status() { require_macos; local enabled=no mapped=no loaded=no plist_exists=no activation='not set' expiry='not set' expiry_epoch; if [[ -f "$EXPIRY_FILE" ]]; then enabled=yes; expiry_epoch="$(<"$EXPIRY_FILE")"; activation="$(time_string "$((expiry_epoch - 15 * 24 * 60 * 60))")"; expiry="$(time_string "$expiry_epoch")"; fi; has_entry && mapped=yes || true; if [[ -f "$PLIST" ]]; then plist_exists=yes; "$LAUNCHCTL" list 2>/dev/null | grep -Fq "$LABEL" && loaded=yes || true; fi; printf 'Enabled: %s\nHosts mapping: %s\nActivation: %s\nExpiry: %s\nLaunchd plist: %s\nLaunchd loaded: %s\nCleanup interval: every 24 hours\n' "$enabled" "$mapped" "$activation" "$expiry" "$plist_exists" "$loaded"; }
+status() { require_macos; local enabled=no mapped=no loaded=no plist_exists=no activation='not set' expiry='not set' expiry_epoch; if [[ -f "$EXPIRY_FILE" ]]; then enabled=yes; expiry_epoch="$(<"$EXPIRY_FILE")"; activation="$(time_string "$((expiry_epoch - 15 * 24 * 60 * 60))")"; expiry="$(time_string "$expiry_epoch")"; fi; has_entry && mapped=yes || true; if [[ -f "$PLIST" ]]; then plist_exists=yes; "$LAUNCHCTL" list 2>/dev/null | grep -Fq "$LABEL" && loaded=yes || true; fi; printf 'Enabled: %s\nHosts mapping: %s\nActivation: %s\nExpiry: %s\nLaunchd plist: %s\nLaunchd loaded: %s\nCleanup interval: every 8 hours\n' "$enabled" "$mapped" "$activation" "$expiry" "$plist_exists" "$loaded"; }
 
 case "${1:-}" in enable) enable ;; disable) disable ;; status) status ;; purge) purge ;; create-cron-job) require_macos; create_cron_job ;; remove-cron-job) require_macos; remove_cron_job ;; *) printf 'Usage: %s {enable|disable|status|purge}\n' "$0" >&2; exit 2 ;; esac

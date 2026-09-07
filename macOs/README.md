@@ -1,6 +1,6 @@
 # Neup Dev Domain
 
-The Apple folder contains a macOS-only Bash tool that maps `dev.neupgroup.com` to `127.0.0.1`.
+The `macOs` folder contains a macOS-only Bash tool that maps `dev.neupgroup.com` to `127.0.0.1`.
 
 ## Installation
 

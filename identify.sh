@@ -10,7 +10,7 @@ os_name="$(uname -s 2>/dev/null || printf '%s' "")"
 
 case "$os_name" in
     Darwin)
-        device_type="apple"
+        device_type="macOS"
         ;;
 
     Linux)

@@ -2,8 +2,8 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-DOMAIN="dev.neupgroup.com"; HOSTS_ENTRY="127.0.0.1 ${DOMAIN}"; LABEL="com.neup.dev-domain-cleanup"; INTERVAL_SECONDS=86400
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; DATA_DIR="${NEUP_DEV_DOMAIN_HOME:-${HOME}/.neup-dev-domain}"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; DOMAIN="$(<"$BASE_DIR/../host.sh")"; HOSTS_ENTRY="127.0.0.1 ${DOMAIN}"; LABEL="com.neup.dev-domain-cleanup"; INTERVAL_SECONDS=86400
+DATA_DIR="${NEUP_DEV_DOMAIN_HOME:-${HOME}/.neup-dev-domain}"
 INSTALLED_SCRIPT="${DATA_DIR}/dev-domain.sh"; EXPIRY_FILE="${DATA_DIR}/expiry"; CLEANUP_LOG="${DATA_DIR}/cleanup.log"; ERROR_LOG="${DATA_DIR}/error.log"
 PLIST="${NEUP_DEV_DOMAIN_LAUNCH_AGENTS:-${HOME}/Library/LaunchAgents}/${LABEL}.plist"; HOSTS_FILE="${NEUP_DEV_DOMAIN_HOSTS_FILE:-/etc/hosts}"; LAUNCHCTL="${NEUP_DEV_DOMAIN_LAUNCHCTL:-/bin/launchctl}"
 

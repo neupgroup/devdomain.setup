@@ -28,7 +28,7 @@ time_string() { date -r "$1" '+%Y-%m-%d %H:%M:%S %Z'; }
 
 enable() {
     require_macos
-    read -r -p "Map ${DOMAIN} locally and create a cleanup job to remove it automatically in 8 hours? [y/N] " answer
+    read -r -p "Map ${DOMAIN} locally and create a cleanup job? [y/N] " answer
     [[ "$answer" =~ ^[Yy]$ ]] || { printf 'Cancelled.\n'; return; }
     mkdir -p "$DATA_DIR"; cp "$BASE_DIR/index.sh" "$INSTALLED_SCRIPT"; chmod 700 "$INSTALLED_SCRIPT"; add_entry
     local now expiry; now="$(date +%s)"; expiry=$((now + 15 * 24 * 60 * 60)); printf '%s\n' "$expiry" > "$EXPIRY_FILE"; chmod 600 "$EXPIRY_FILE"
